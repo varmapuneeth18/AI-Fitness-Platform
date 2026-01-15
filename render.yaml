@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: fitness-api
+    env: python
+    region: oregon
+    buildCommand: pip install -r apps/api/requirements.txt
+    preDeployCommand: alembic upgrade head
+    startCommand: PYTHONPATH=apps/api python -m uvicorn main:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: DATABASE_URL
+        sync: false
