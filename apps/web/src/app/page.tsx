@@ -1,24 +1,60 @@
 "use client"
 
 import dynamic from 'next/dynamic'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Suspense, useState, useEffect } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Zap } from 'lucide-react'
 
-// Dynamically import the 3D component to avoid SSR issues with Canvas
+// Dynamically import the 3D component to avoid SSR issues
 const ForgeWorld = dynamic(() => import('@/components/forge-world/World'), {
     ssr: false,
-    loading: () => (
-        <div className="h-screen w-full bg-[#020202] flex items-center justify-center">
-            <div className="flex flex-col items-center gap-6">
-                <Loader2 className="h-10 w-10 text-orange-600 animate-spin" />
-                <div className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-700">
-                    Syncing Forge Engine...
+    loading: () => <LoadingState />
+})
+
+function LoadingState() {
+    return (
+        <div className="h-screen w-full bg-[#020202] flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(249,115,22,0.05)_0%,transparent_70%)]" />
+
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative z-10 flex flex-col items-center gap-10"
+            >
+                <div className="relative">
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                        className="w-24 h-24 border-t-2 border-r-2 border-orange-600 rounded-full"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <Zap className="h-8 w-8 text-orange-600 fill-orange-600 animate-pulse" />
+                    </div>
                 </div>
+
+                <div className="space-y-3 text-center">
+                    <h2 className="text-2xl font-black uppercase italic tracking-[-0.05em] text-white">Initializing Forge</h2>
+                    <div className="flex items-center gap-3">
+                        <div className="h-1 w-48 bg-white/5 rounded-full overflow-hidden">
+                            <motion.div
+                                initial={{ width: "0%" }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: 3, ease: "easeInOut" }}
+                                className="h-full bg-orange-600"
+                            />
+                        </div>
+                    </div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.5em] text-gray-700">Syncing Bio-Telemetry & 3D Environment</p>
+                </div>
+            </motion.div>
+
+            {/* Background Decorative Text */}
+            <div className="absolute bottom-20 left-1/2 -translate-x-1/2 opacity-[0.02] text-[15vw] font-black uppercase italic select-none pointer-events-none whitespace-nowrap">
+                LIMITS ARE LOGIC LIMITS ARE LOGIC
             </div>
         </div>
     )
-})
+}
 
 export default function LandingPage() {
     const [mounted, setMounted] = useState(false)
@@ -30,32 +66,38 @@ export default function LandingPage() {
     if (!mounted) return null
 
     return (
-        <main className="h-screen w-full overflow-hidden bg-black">
-            <Suspense fallback={null}>
+        <main className="h-screen w-full overflow-hidden bg-black selection:bg-orange-600/30">
+            <Suspense fallback={<LoadingState />}>
                 <ForgeWorld />
             </Suspense>
 
-            {/* Minimal Background Music indicator or other environmental 2D details can go here */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2 }}
-                className="fixed bottom-10 right-10 z-[100] flex items-center gap-4 group"
-            >
-                <div className="flex gap-1 items-end h-3">
-                    {[0.6, 0.4, 0.8, 0.3].map((h, i) => (
-                        <motion.div
-                            key={i}
-                            animate={{ height: [`${h * 100}%`, `${(1 - h) * 100}%`, `${h * 100}%`] }}
-                            transition={{ duration: 1 + i * 0.2, repeat: Infinity }}
-                            className="w-0.5 bg-orange-600/30 group-hover:bg-orange-600 transition-colors"
-                        />
-                    ))}
-                </div>
-                <span className="text-[8px] font-black uppercase tracking-[0.4em] text-gray-800 group-hover:text-gray-500 transition-colors">
-                    Ambient Environment Active
-                </span>
-            </motion.div>
+            <AnimatePresence>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 3 }}
+                    className="fixed bottom-12 right-12 z-[100] flex items-center gap-6 group pointer-events-none"
+                >
+                    <div className="flex gap-1.5 items-end h-4">
+                        {[0.6, 0.4, 0.9, 0.3, 0.7].map((h, i) => (
+                            <motion.div
+                                key={i}
+                                animate={{ height: [`${h * 100}%`, `${(1 - h) * 100}%`, `${h * 100}%`] }}
+                                transition={{ duration: 1.5 + i * 0.3, repeat: Infinity }}
+                                className="w-0.5 bg-orange-600/20 group-hover:bg-orange-600 transition-colors"
+                            />
+                        ))}
+                    </div>
+                    <div className="text-right">
+                        <p className="text-[9px] font-black uppercase tracking-[0.5em] text-gray-800 transition-colors">
+                            Forge Core v0.1.2
+                        </p>
+                        <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-gray-900">
+                            Neural Sync: Persistent
+                        </p>
+                    </div>
+                </motion.div>
+            </AnimatePresence>
         </main>
     )
 }
