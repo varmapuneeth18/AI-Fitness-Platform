@@ -15,6 +15,10 @@ app.include_router(nutrition.router)
 app.include_router(workouts.router)
 app.include_router(coach.router)
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Antigravity Fitness API", "docs": "/docs", "health": "/health"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"], 
