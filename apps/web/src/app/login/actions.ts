@@ -2,6 +2,7 @@
 
 import { signIn } from "@/auth"
 import { AuthError } from "next-auth"
+import { isRedirectError } from "next/dist/client/components/redirect-error"
 
 export async function performLogin(data: any) {
     try {
@@ -10,15 +11,18 @@ export async function performLogin(data: any) {
             password: data.password,
             redirectTo: "/dashboard",
         })
-    } catch (error) {
+    } catch (error: any) {
+        if (isRedirectError(error)) {
+            throw error
+        }
         if (error instanceof AuthError) {
             switch (error.type) {
                 case "CredentialsSignin":
-                    throw new Error("Invalid credentials.")
+                    throw new Error("Invalid email or password. Please try again.")
                 default:
-                    throw new Error("Something went wrong.")
+                    throw new Error("Authentication failed. Please check your connection.")
             }
         }
-        throw error
+        throw new Error(error.message || "An unexpected error occurred during sign in.")
     }
 }
