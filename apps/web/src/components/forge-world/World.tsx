@@ -270,7 +270,7 @@ export default function ForgeWorld() {
                     <ForgeScene />
 
                     {/* POST PROCESSING - THE BANGER FACTOR */}
-                    <EffectComposer disableNormalPass>
+                    <EffectComposer>
                         <Bloom
                             luminanceThreshold={1}
                             mipmapBlur
@@ -285,12 +285,11 @@ export default function ForgeWorld() {
 
                 <PresentationControls
                     global
-                    snap={{ mass: 4, tension: 1500 }}
+                    snap
                     speed={1.5}
                     rotation={[0, 0.4, 0]}
                     polar={[-Math.PI / 10, Math.PI / 10]}
                     azimuth={[-Math.PI / 2, Math.PI / 2]}
-                    config={{ mass: 1, tension: 170, friction: 26 }}
                 >
                     {/* Scene wrapper */}
                 </PresentationControls>
