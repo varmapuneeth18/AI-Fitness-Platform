@@ -59,7 +59,7 @@ export function Sidebar({ className }: SidebarProps) {
         <div className={cn("pb-12 space-y-4", className)}>
             <div className="px-3 py-2">
                 <h2 className="mb-2 px-4 text-lg font-bold tracking-tight">
-                    Fitness Coach
+                    Forge Central
                 </h2>
                 <div className="space-y-1">
                     {routes.map((route) => (

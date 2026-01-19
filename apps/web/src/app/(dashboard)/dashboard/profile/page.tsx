@@ -113,8 +113,8 @@ export default function ProfilePage() {
                                 {session?.user?.email?.[0].toUpperCase() || "A"}
                             </div>
                             <div>
-                                <div className="text-white font-bold">Premium Tier</div>
-                                <div className="text-xs text-blue-500/60">Membership Active</div>
+                                <div className="text-white font-bold">Founder Member</div>
+                                <div className="text-xs text-blue-500/60">Forge Access Verified</div>
                             </div>
                         </div>
                     </Card>

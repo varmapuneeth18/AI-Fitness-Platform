@@ -17,7 +17,7 @@ app.include_router(coach.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the Antigravity Fitness API", "docs": "/docs", "health": "/health"}
+    return {"message": "Welcome to the Forge Fitness API", "docs": "/docs", "health": "/health"}
 
 app.add_middleware(
     CORSMiddleware,

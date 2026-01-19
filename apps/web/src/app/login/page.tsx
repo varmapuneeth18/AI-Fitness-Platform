@@ -4,10 +4,9 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-import { Zap, Dumbbell, Mail, Lock, User as UserIcon, ArrowRight, Loader2 } from "lucide-react"
+import { Zap, Dumbbell, Mail, Lock, User as UserIcon, ArrowRight, Loader2, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -19,10 +18,11 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { performLogin } from "./actions"
 
 const formSchema = z.object({
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    email: z.string().email("Please enter a valid global identifier"),
+    password: z.string().min(6, "Access key must be at least 6 characters"),
     fullName: z.string().optional(),
 })
 
@@ -52,10 +52,10 @@ export default function LoginPage() {
             })
             if (!res.ok) {
                 const err = await res.json()
-                throw new Error(err.detail || "Registration failed")
+                throw new Error(err.detail || "Initialization failed")
             }
             setIsLogin(true)
-            setError("Registration successful! Bio-metrics established. Please sign in.")
+            setError("Bio-metrics established. Access granted. Please sign in.")
         } catch (e: any) {
             setError(e.message)
         } finally {
@@ -75,96 +75,96 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="relative flex items-center justify-center min-h-screen bg-[#050505] overflow-hidden px-4">
-            {/* Animated Background Elements */}
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full animate-pulse" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-600/20 blur-[120px] rounded-full animate-pulse delay-700" />
+        <div className="relative flex items-center justify-center min-h-screen bg-[#050505] overflow-hidden px-4 selection:bg-orange-500/30">
+            {/* Animated Flare Elements */}
+            <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-orange-600/10 blur-[150px] rounded-full animate-pulse" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-amber-600/10 blur-[150px] rounded-full animate-pulse delay-1000" />
 
-            <div className="w-full max-w-md z-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                <div className="text-center space-y-2">
-                    <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-blue-500 to-violet-600 rounded-2xl shadow-2xl shadow-blue-500/20 mb-4 animate-bounce-slow">
-                        <Zap className="h-8 w-8 text-white fill-white" />
+            <div className="w-full max-w-md z-10 space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                <div className="text-center space-y-3">
+                    <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-orange-500 to-amber-600 rounded-[1.5rem] shadow-2xl shadow-orange-500/20 mb-2">
+                        <Zap className="h-10 w-10 text-white fill-white" />
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">
-                        Antigravity
+                    <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic">
+                        Forge
                     </h1>
-                    <p className="text-gray-500 font-medium tracking-wide">
-                        {isLogin ? "PROTOCOL ACCESS" : "INITIALIZE EVOLUTION"}
-                    </p>
+                    <div className="flex items-center justify-center gap-2 text-gray-500 font-bold tracking-[0.3em] text-[10px]">
+                        <ShieldCheck className="h-3 w-3" /> SECURE PROTOCOL ACCESS
+                    </div>
                 </div>
 
-                <Card className="bg-white/[0.03] border-white/5 backdrop-blur-xl rounded-[2.5rem] shadow-2xl overflow-hidden">
-                    <CardHeader className="pt-8 pb-4 px-8">
-                        <CardTitle className="text-2xl font-bold text-white text-center">
-                            {isLogin ? "Welcome Back" : "Identity Creation"}
+                <Card className="bg-white/[0.02] border-white/5 backdrop-blur-2xl rounded-[3rem] shadow-2xl overflow-hidden border-t-white/10">
+                    <CardHeader className="pt-10 pb-4 px-10">
+                        <CardTitle className="text-3xl font-black text-white text-center uppercase italic tracking-tight">
+                            {isLogin ? "Identify" : "Initialize"}
                         </CardTitle>
-                        <CardDescription className="text-center text-gray-500">
+                        <CardDescription className="text-center text-gray-500 font-medium">
                             {isLogin
-                                ? "Enter your credentials to resume optimization."
-                                : "Define your bio-parameters to begin."}
+                                ? "Resuming evolution protocol."
+                                : "Creating your private bio-signature."}
                         </CardDescription>
                     </CardHeader>
 
-                    <CardContent className="px-8 pb-8 pt-4">
+                    <CardContent className="px-10 pb-10 pt-4">
                         {error && (
-                            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-medium animate-in fade-in zoom-in-95">
+                            <div className="mb-8 p-5 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-500 text-xs font-bold uppercase tracking-wider animate-in fade-in zoom-in-95 leading-relaxed">
                                 {error}
                             </div>
                         )}
 
-                        <form className="space-y-5" onSubmit={handleSubmit(isLogin ? onLogin : onRegister)}>
+                        <form className="space-y-6" onSubmit={handleSubmit(isLogin ? onLogin : onRegister)}>
                             {!isLogin && (
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase tracking-widest text-gray-500 pl-1">Full Name</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 pl-2">Full Identity</Label>
                                     <div className="relative group">
-                                        <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
+                                        <UserIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600 group-focus-within:text-orange-500 transition-colors" />
                                         <Input
                                             placeholder="John Doe"
                                             {...register("fullName")}
-                                            className="bg-black/40 border-white/10 rounded-xl py-6 pl-12 text-white placeholder:text-gray-700 focus-visible:ring-blue-500 transition-all border-l-4 border-l-transparent focus-visible:border-l-blue-500"
+                                            className="bg-black/60 border-white/5 rounded-2xl py-7 pl-14 text-white placeholder:text-gray-800 focus-visible:ring-orange-500/50 transition-all border-l-4 border-l-transparent focus-visible:border-l-orange-500 h-14"
                                         />
                                     </div>
                                 </div>
                             )}
 
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase tracking-widest text-gray-500 pl-1">Global Identifier</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 pl-2">Global Identifier</Label>
                                 <div className="relative group">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
+                                    <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600 group-focus-within:text-orange-500 transition-colors" />
                                     <Input
                                         type="email"
-                                        placeholder="user@antigravity.io"
+                                        placeholder="user@forge.io"
                                         {...register("email")}
-                                        className="bg-black/40 border-white/10 rounded-xl py-6 pl-12 text-white placeholder:text-gray-700 focus-visible:ring-blue-500 transition-all border-l-4 border-l-transparent focus-visible:border-l-blue-500"
+                                        className="bg-black/60 border-white/5 rounded-2xl py-7 pl-14 text-white placeholder:text-gray-800 focus-visible:ring-orange-500/50 transition-all border-l-4 border-l-transparent focus-visible:border-l-orange-500 h-14"
                                     />
                                 </div>
-                                {errors.email && <p className="text-red-500 text-[10px] font-bold uppercase mt-1 pl-1">{errors.email.message}</p>}
+                                {errors.email && <p className="text-orange-500 text-[9px] font-black uppercase mt-1.5 pl-2 tracking-widest">{errors.email.message}</p>}
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase tracking-widest text-gray-500 pl-1">Restricted Access Key</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 pl-2">Access Key</Label>
                                 <div className="relative group">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
+                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600 group-focus-within:text-orange-500 transition-colors" />
                                     <Input
                                         type="password"
                                         placeholder="••••••••"
                                         {...register("password")}
-                                        className="bg-black/40 border-white/10 rounded-xl py-6 pl-12 text-white placeholder:text-gray-700 focus-visible:ring-blue-500 transition-all border-l-4 border-l-transparent focus-visible:border-l-blue-500"
+                                        className="bg-black/60 border-white/5 rounded-2xl py-7 pl-14 text-white placeholder:text-gray-800 focus-visible:ring-orange-500/50 transition-all border-l-4 border-l-transparent focus-visible:border-l-orange-500 h-14"
                                     />
                                 </div>
-                                {errors.password && <p className="text-red-500 text-[10px] font-bold uppercase mt-1 pl-1">{errors.password.message}</p>}
+                                {errors.password && <p className="text-orange-500 text-[9px] font-black uppercase mt-1.5 pl-2 tracking-widest">{errors.password.message}</p>}
                             </div>
 
                             <Button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-bold py-7 rounded-2xl shadow-xl shadow-blue-500/20 transition-all active:scale-[0.98] group"
+                                className="w-full bg-orange-600 hover:bg-orange-500 text-white font-black uppercase tracking-[0.2em] py-8 rounded-2xl shadow-2xl shadow-orange-600/20 transition-all active:scale-[0.97] group text-xs"
                             >
                                 {isLoading ? (
                                     <Loader2 className="h-5 w-5 animate-spin" />
                                 ) : (
                                     <>
-                                        {isLogin ? "AUTHORIZE ENTRY" : "CONFIRM INITIALIZATION"}
+                                        {isLogin ? "Confirm Identity" : "Initialize Bio-Sig"}
                                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                     </>
                                 )}
@@ -172,32 +172,29 @@ export default function LoginPage() {
                         </form>
                     </CardContent>
 
-                    <CardFooter className="flex flex-col space-y-4 pb-8">
-                        <div className="w-full flex items-center justify-center gap-4 px-8">
+                    <CardFooter className="flex flex-col space-y-6 pb-12 pt-4 px-10">
+                        <div className="w-full flex items-center justify-center gap-6">
                             <div className="h-px flex-1 bg-white/5" />
-                            <span className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Switch Mode</span>
+                            <span className="text-[9px] font-black text-gray-700 uppercase tracking-[0.4em]">Protocol Toggle</span>
                             <div className="h-px flex-1 bg-white/5" />
                         </div>
-                        <Button
-                            variant="ghost"
+                        <button
                             onClick={() => {
                                 setIsLogin(!isLogin)
                                 setError("")
                             }}
-                            className="text-gray-500 hover:text-white hover:bg-white/5 rounded-xl py-6 underline-offset-4"
+                            className="text-gray-500 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest flex items-center gap-2 group"
                         >
-                            {isLogin ? "Need a profile? Initialize here" : "Return to secure access"}
-                        </Button>
+                            {isLogin ? "Need a signature? Create here" : "Return to identification"}
+                            <Zap className="h-3 w-3 text-orange-500 group-hover:animate-pulse" />
+                        </button>
                     </CardFooter>
                 </Card>
 
-                <p className="text-center text-[10px] text-gray-600 font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-                    <Dumbbell className="h-3 w-3" /> Encrypted Human Optimization Platform
+                <p className="text-center text-[9px] text-gray-700 font-black uppercase tracking-[0.5em] flex items-center justify-center gap-3">
+                    <Dumbbell className="h-3 w-3" /> Built for the inner circle
                 </p>
             </div>
         </div>
     )
 }
-
-// Separate this if needed, defining inline for now as Client Component can't be async server action
-import { performLogin } from "./actions"
