@@ -4,7 +4,8 @@ import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { TrendingUp, FileText } from "lucide-react"
+import { TrendingUp, FileText, Bot } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export default function ProgressPage() {
     const { data: session } = useSession()
@@ -108,5 +109,4 @@ export default function ProgressPage() {
     )
 }
 
-import { cn } from "@/lib/utils"
-import { Bot } from "lucide-react"
+
