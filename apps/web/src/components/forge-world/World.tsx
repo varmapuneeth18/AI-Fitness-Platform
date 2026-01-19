@@ -185,13 +185,14 @@ function ForgeParticles() {
 
 function InfiniteGround() {
     return (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -10, 0]} receiveShadow>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -12, 0]} receiveShadow>
             <planeGeometry args={[2000, 2000]} />
             <meshStandardMaterial
                 color="#000"
-                roughness={0}
-                metalness={1}
-                envMapIntensity={0.2}
+                roughness={0.4}
+                metalness={0.5}
+                transparent
+                opacity={0.8}
             />
         </mesh>
     )
@@ -202,7 +203,7 @@ function ForgeScene() {
         <group>
             <ForgeStation
                 index="ALPHA"
-                position={[-10, 0, 2]}
+                position={[-12, -2, 4]}
                 color="#f97316"
                 icon={Dumbbell}
                 title="PROTOCOLS"
@@ -211,7 +212,7 @@ function ForgeScene() {
             />
             <ForgeStation
                 index="BETA"
-                position={[10, 0, 2]}
+                position={[12, -2, 4]}
                 color="#f97316"
                 icon={Utensils}
                 title="METABOLIC"
@@ -220,7 +221,7 @@ function ForgeScene() {
             />
             <ForgeStation
                 index="GAMMA"
-                position={[0, 0, -10]}
+                position={[0, -2, -12]}
                 color="#ffffff"
                 icon={Cpu}
                 title="INTELLIGENCE"
@@ -228,18 +229,18 @@ function ForgeScene() {
                 tags={["AI Chat", "Neural", "Strategy"]}
             />
 
-            {/* Central Power Core - MASSIVE */}
-            <Float speed={5} rotationIntensity={2} floatIntensity={1}>
+            {/* Central Power Core - STABLE */}
+            <Float speed={3} rotationIntensity={1} floatIntensity={0.5}>
                 <mesh position={[0, 0, 0]}>
-                    <sphereGeometry args={[4, 64, 64]} />
+                    <sphereGeometry args={[3, 64, 64]} />
                     <MeshDistortMaterial
                         color="#f97316"
-                        distort={0.4}
-                        speed={3}
+                        distort={0.3}
+                        speed={2}
                         metalness={1}
                         roughness={0}
                         emissive="#f97316"
-                        emissiveIntensity={8}
+                        emissiveIntensity={4}
                     />
                 </mesh>
             </Float>
@@ -296,39 +297,37 @@ export default function ForgeWorld() {
                 gl={{ antialias: false, powerPreference: "high-performance" }}
                 dpr={[1, 2]}
             >
-                <PerspectiveCamera makeDefault position={[18, 10, 18]} fov={35} />
+                <PerspectiveCamera makeDefault position={[22, 12, 22]} fov={35} />
 
                 <color attach="background" args={['#000']} />
-                <Stars radius={200} depth={100} count={10000} factor={6} saturation={0} fade speed={2} />
+                <Stars radius={200} depth={100} count={5000} factor={4} saturation={0} fade speed={1} />
 
                 <Suspense fallback={null}>
-                    <Environment preset="night" />
-
-                    <ambientLight intensity={1} />
-                    <spotLight position={[30, 30, 30]} angle={0.2} penumbra={1} intensity={15} color="#f97316" castShadow />
+                    {/* Simplified Lighting for Stability */}
+                    <ambientLight intensity={0.4} />
+                    <pointLight position={[20, 20, 20]} intensity={10} color="#f97316" />
+                    <pointLight position={[-20, 10, -20]} intensity={5} color="#fff" />
 
                     <PresentationControls
                         global
                         snap
                         speed={1.5}
                         rotation={[0, 0.4, 0]}
-                        polar={[-Math.PI / 10, Math.PI / 10]}
+                        polar={[-Math.PI / 15, Math.PI / 15]}
                         azimuth={[-Math.PI / 2, Math.PI / 2]}
                     >
                         <ForgeScene />
                     </PresentationControls>
 
-                    {/* POST PROCESSING - THE BANGER FACTOR */}
+                    {/* POST PROCESSING - BALANCED GLOW */}
                     <EffectComposer>
                         <Bloom
-                            luminanceThreshold={0.5}
+                            luminanceThreshold={1.2}
                             mipmapBlur
-                            intensity={2}
-                            radius={0.4}
+                            intensity={1.2}
+                            radius={0.3}
                         />
-                        <ChromaticAberration offset={new THREE.Vector2(0.001, 0.001)} />
-                        <Noise opacity={0.05} />
-                        <Vignette eskil={false} offset={0.1} darkness={1.1} />
+                        <Vignette eskil={false} offset={0.2} darkness={1.2} />
                     </EffectComposer>
                 </Suspense>
 
