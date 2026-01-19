@@ -38,25 +38,29 @@ function ForgeStation({ position, color, icon: Icon, title, description, tags }:
                     ref={meshRef}
                     onPointerOver={() => setHovered(true)}
                     onPointerOut={() => setHovered(false)}
-                    onClick={() => console.log(`Clicked ${title}`)}
+                    scale={hovered ? 1.5 : 1}
                 >
-                    <boxGeometry args={[1.5, 1.5, 1.5]} />
+                    <boxGeometry args={[2.5, 2.5, 2.5]} />
                     <MeshWobbleMaterial
-                        color={hovered ? "#f97316" : "#222"}
-                        factor={hovered ? 0.6 : 0.2}
+                        color={hovered ? "#fb923c" : "#444"}
+                        emissive={hovered ? "#f97316" : "#222"}
+                        emissiveIntensity={hovered ? 5 : 1}
+                        factor={hovered ? 1 : 0.4}
                         speed={2}
                         roughness={0}
                         metalness={1}
                     />
                 </mesh>
 
+                <pointLight position={[0, 4, 0]} intensity={hovered ? 10 : 2} color="#f97316" />
+
                 {/* AR-Style 2D Panel */}
                 <Html
-                    position={[0, 2.5, 0]}
+                    position={[0, 4.5, 0]}
                     center
-                    distanceFactor={10}
+                    distanceFactor={8}
                     className="pointer-events-none select-none"
-                    style={{ transition: 'all 0.5s', opacity: hovered ? 1 : 0.4, transform: `scale(${hovered ? 1.1 : 1})` }}
+                    style={{ transition: 'all 0.5s', opacity: hovered ? 1 : 0.7, transform: `scale(${hovered ? 1.1 : 0.9})` }}
                 >
                     <div className="w-[300px] p-6 rounded-3xl bg-black/80 border border-white/10 backdrop-blur-2xl space-y-4">
                         <div className="flex items-center gap-3">
@@ -158,13 +162,13 @@ function ForgeWorld() {
 
             {/* 3D Scene */}
             <Canvas shadows className="cursor-grab active:cursor-grabbing">
-                <PerspectiveCamera makeDefault position={[10, 8, 10]} fov={40} />
+                <PerspectiveCamera makeDefault position={[12, 8, 12]} fov={45} />
 
                 <color attach="background" args={['#020202']} />
 
-                <ambientLight intensity={1.5} />
-                <spotLight position={[10, 20, 10]} angle={0.25} penumbra={1} intensity={3} color="#f97316" castShadow />
-                <pointLight position={[-10, -10, -10]} intensity={1} color="#333" />
+                <ambientLight intensity={1} />
+                <spotLight position={[20, 20, 20]} angle={0.15} penumbra={1} intensity={5} color="#f97316" castShadow />
+                <pointLight position={[-10, 10, -10]} intensity={2} color="#fff" />
 
                 <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
 
@@ -177,28 +181,28 @@ function ForgeWorld() {
                 >
                     <group>
                         <ForgeStation
-                            position={[-5, 0, -5]}
+                            position={[-6, 0, 0]}
                             color="#f97316"
                             icon={Dumbbell}
                             title="PROTOCOLS"
-                            description="Log every rep. Every vector of force is monitored by the Forge Engine. High-intensity workout tracking with infinite history."
-                            tags={["500+ Exercises", "Log Telemetry", "Progression"]}
+                            description="500+ Exercises. Professional log engine with real-time volume telemetry and force vectors."
+                            tags={["Lifting", "Volume", "PR Logic"]}
                         />
                         <ForgeStation
-                            position={[5, 0, -2]}
+                            position={[6, 0, 0]}
                             color="#f97316"
                             icon={Utensils}
                             title="METABOLIC"
-                            description="Fuelling logic established. Log nutrition metrics and let the Forge sync your macros to your output volume."
-                            tags={["Macro Logic", "Meal History", "Bio-Sync"]}
+                            description="Intelligent fueling. Sync your metabolic load directly to your training intensity."
+                            tags={["Macro Engine", "Fueling", "Bio-Sync"]}
                         />
                         <ForgeStation
-                            position={[0, 0, 5]}
+                            position={[0, 0, -6]}
                             color="#fff"
                             icon={Cpu}
                             title="COACH"
-                            description="Your neural-linked assistant. Consult the Forge AI for routine adjustments and real-world nutrition advice."
-                            tags={["AI Chat", "Neural Insights", "24/7 Support"]}
+                            description="Neural-linked assistant. 24/7 tactical advice based on your personal performance data."
+                            tags={["AI Insights", "Chat", "Support"]}
                         />
 
                         {/* Central Hub Object */}
