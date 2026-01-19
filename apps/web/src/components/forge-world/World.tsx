@@ -1,26 +1,26 @@
 "use client"
 
 import React, { useRef, useState, useMemo, Suspense } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import {
     PerspectiveCamera,
     Float,
     MeshDistortMaterial,
     MeshWobbleMaterial,
-    MeshTransmissionMaterial,
     Html,
     Environment,
     ContactShadows,
     PresentationControls,
     Stars,
-    Stage,
     Text,
-    Torus
+    Torus,
+    MeshTransmissionMaterial
 } from '@react-three/drei'
+import { EffectComposer, Bloom, Noise, Vignette, ChromaticAberration } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Zap, Dumbbell, Utensils, Cpu, MessageSquare, ArrowRight, Activity, Target, Shield } from 'lucide-react'
+import { Zap, Dumbbell, Utensils, Cpu, Activity } from 'lucide-react'
 
 // --- Components ---
 
@@ -29,44 +29,50 @@ function MachineCore({ hovered, color }: { hovered: boolean, color: string }) {
 
     useFrame((state) => {
         if (meshRef.current) {
-            meshRef.current.rotation.y += 0.02
-            meshRef.current.rotation.z += 0.01
+            meshRef.current.rotation.y += 0.015
+            meshRef.current.rotation.z += 0.005
         }
     })
 
     return (
-        <mesh ref={meshRef}>
-            <octahedronGeometry args={[1.2, 0]} />
+        <mesh ref={meshRef} scale={hovered ? 1.5 : 1.2}>
+            <octahedronGeometry args={[2.5, 0]} />
             <MeshDistortMaterial
                 color={hovered ? color : "#222"}
                 speed={2}
                 distort={0.4}
                 metalness={1}
                 roughness={0.1}
-                emissive={hovered ? color : "#111"}
-                emissiveIntensity={hovered ? 2 : 0.5}
+                emissive={color}
+                emissiveIntensity={hovered ? 10 : 1}
             />
         </mesh>
     )
 }
 
-function MachineRings({ hovered }: { hovered: boolean }) {
+function MachineRings({ hovered, color }: { hovered: boolean, color: string }) {
     const groupRef = useRef<THREE.Group>(null!)
 
     useFrame((state) => {
         if (groupRef.current) {
-            groupRef.current.rotation.x += 0.01
-            groupRef.current.rotation.y -= 0.015
+            groupRef.current.rotation.x += 0.005
+            groupRef.current.rotation.y -= 0.01
         }
     })
 
     return (
         <group ref={groupRef}>
-            <Torus args={[2, 0.02, 16, 100]} rotation={[Math.PI / 2, 0, 0]}>
-                <meshStandardMaterial color={hovered ? "#f97316" : "#444"} emissive={hovered ? "#f97316" : "#000"} emissiveIntensity={2} />
+            <Torus args={[4, 0.04, 16, 100]} rotation={[Math.PI / 2, 0, 0]}>
+                <meshStandardMaterial
+                    color={color}
+                    emissive={color}
+                    emissiveIntensity={hovered ? 20 : 2}
+                    transparent
+                    opacity={0.8}
+                />
             </Torus>
-            <Torus args={[1.8, 0.01, 16, 100]} rotation={[0, Math.PI / 2, 0]}>
-                <meshStandardMaterial color={hovered ? "#fff" : "#222"} transparent opacity={0.5} />
+            <Torus args={[3.6, 0.02, 16, 100]} rotation={[0, Math.PI / 2, 0]}>
+                <meshStandardMaterial color="#fff" transparent opacity={0.2} />
             </Torus>
         </group>
     )
@@ -74,58 +80,56 @@ function MachineRings({ hovered }: { hovered: boolean }) {
 
 function ForgeStation({ position, color, icon: Icon, title, description, tags, index }: any) {
     const [hovered, setHovered] = useState(false)
-    const groupRef = useRef<THREE.Group>(null!)
 
     return (
         <group
             position={position}
-            ref={groupRef}
             onPointerOver={() => setHovered(true)}
             onPointerOut={() => setHovered(false)}
         >
-            <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-                {/* 3D Machine Model */}
+            <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
+                {/* 3D Machine Model - MASSIVE SCALE */}
                 <MachineCore hovered={hovered} color={color} />
-                <MachineRings hovered={hovered} />
+                <MachineRings hovered={hovered} color={color} />
 
                 {/* Inner Icon */}
-                <Html position={[0, 0, 0]} center distanceFactor={10}>
-                    <div className={`transition-all duration-500 ${hovered ? 'scale-125 opacity-100' : 'scale-100 opacity-20'}`}>
-                        <Icon className="h-12 w-12 text-white" />
+                <Html position={[0, 0, 0]} center distanceFactor={15}>
+                    <div className={`transition-all duration-700 ${hovered ? 'scale-[2] opacity-100 blur-none' : 'scale-100 opacity-10 blur-[2px]'}`}>
+                        <Icon className="h-20 w-20 text-white" />
                     </div>
                 </Html>
 
                 {/* Glass Holographic Panel */}
                 <Html
-                    position={[0, 4, 0]}
+                    position={[0, 7, 0]}
                     center
-                    distanceFactor={10}
+                    distanceFactor={15}
                     className="pointer-events-none select-none"
                     style={{
-                        transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                        opacity: hovered ? 1 : 0.2,
-                        transform: `scale(${hovered ? 1.05 : 0.8}) translateY(${hovered ? 0 : 20}px)`
+                        transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                        opacity: hovered ? 1 : 0.15,
+                        transform: `scale(${hovered ? 1.2 : 0.8}) translateY(${hovered ? 0 : 50}px)`
                     }}
                 >
-                    <div className="w-[320px] p-8 rounded-[2rem] bg-black/40 border border-white/10 backdrop-blur-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-600 to-transparent opacity-50" />
+                    <div className="w-[400px] p-10 rounded-[3rem] bg-black/60 border border-white/10 backdrop-blur-3xl shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-orange-600 to-transparent opacity-50" />
 
-                        <div className="flex items-center justify-between mb-6">
-                            <span className="text-[10px] font-black text-orange-600 tracking-[0.5em] uppercase">SYSTEM {index}</span>
-                            <div className={`w-2 h-2 rounded-full bg-orange-600 ${hovered ? 'animate-ping' : ''}`} />
+                        <div className="flex items-center justify-between mb-8">
+                            <span className="text-[12px] font-black text-orange-600 tracking-[0.6em] uppercase italic">SYSTEM_{index}</span>
+                            <div className={`w-3 h-3 rounded-full bg-orange-600 ${hovered ? 'animate-ping' : ''}`} />
                         </div>
 
-                        <h3 className="text-3xl font-black uppercase italic tracking-tighter text-white mb-3">
+                        <h3 className="text-5xl font-black uppercase italic tracking-tighter text-white mb-4">
                             {title}
                         </h3>
 
-                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider leading-relaxed mb-6">
+                        <p className="text-[13px] text-gray-400 font-bold uppercase tracking-wider leading-relaxed mb-10">
                             {description}
                         </p>
 
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-3">
                             {tags.map((tag: string) => (
-                                <span key={tag} className="text-[9px] font-black uppercase tracking-widest text-white/40 border border-white/5 px-3 py-1.5 rounded-full">
+                                <span key={tag} className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 border border-white/10 px-4 py-2 rounded-full bg-white/5">
                                     {tag}
                                 </span>
                             ))}
@@ -133,20 +137,33 @@ function ForgeStation({ position, color, icon: Icon, title, description, tags, i
                     </div>
                 </Html>
 
-                {/* Ground Glow */}
-                <pointLight position={[0, -2, 0]} intensity={hovered ? 15 : 2} color={color} distance={10} />
+                {/* Local Volumetric Light */}
+                <pointLight position={[0, 0, 0]} intensity={hovered ? 50 : 5} color={color} distance={20} />
             </Float>
         </group>
+    )
+}
+
+function InfiniteGround() {
+    return (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -15, 0]} receiveShadow>
+            <planeGeometry args={[1000, 1000]} />
+            <meshStandardMaterial
+                color="#020202"
+                roughness={0.05}
+                metalness={1}
+                envMapIntensity={0.5}
+            />
+        </mesh>
     )
 }
 
 function ForgeScene() {
     return (
         <group>
-            {/* Stations in a triangular formation for better orbit exploration */}
             <ForgeStation
-                index="01"
-                position={[-8, 0, 4]}
+                index="ALPHA"
+                position={[-15, 0, 5]}
                 color="#f97316"
                 icon={Dumbbell}
                 title="PROTOCOLS"
@@ -154,8 +171,8 @@ function ForgeScene() {
                 tags={["Lifting", "Telemetry", "Volume"]}
             />
             <ForgeStation
-                index="02"
-                position={[8, 0, 4]}
+                index="BETA"
+                position={[15, 0, 5]}
                 color="#f97316"
                 icon={Utensils}
                 title="METABOLIC"
@@ -163,8 +180,8 @@ function ForgeScene() {
                 tags={["Macros", "Fueling", "Sync"]}
             />
             <ForgeStation
-                index="03"
-                position={[0, 0, -8]}
+                index="GAMMA"
+                position={[0, 0, -15]}
                 color="#ffffff"
                 icon={Cpu}
                 title="INTELLIGENCE"
@@ -173,53 +190,44 @@ function ForgeScene() {
             />
 
             {/* Central Power Core */}
-            <Float speed={5} rotationIntensity={4} floatIntensity={1}>
-                <mesh position={[0, 1, 0]}>
-                    <sphereGeometry args={[1, 32, 32]} />
+            <Float speed={10} rotationIntensity={5} floatIntensity={2}>
+                <mesh position={[0, 0, 0]}>
+                    <sphereGeometry args={[2, 64, 64]} />
                     <MeshDistortMaterial
                         color="#f97316"
-                        distort={0.4}
-                        speed={4}
+                        distort={0.6}
+                        speed={5}
                         metalness={1}
                         roughness={0}
                         emissive="#f97316"
-                        emissiveIntensity={2}
+                        emissiveIntensity={5}
                     />
                 </mesh>
             </Float>
 
-            {/* Cinematic Floor */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4, 0]} receiveShadow>
-                <planeGeometry args={[100, 100]} />
-                <meshStandardMaterial color="#050505" roughness={0.1} metalness={0.8} />
-            </mesh>
+            <InfiniteGround />
         </group>
     )
 }
 
 export default function ForgeWorld() {
     return (
-        <div className="w-full h-screen bg-[#020202] relative overflow-hidden">
-            {/* 2D Overlay HUD - High Tech Elite Aesthetic */}
-            <div className="absolute inset-0 z-10 pointer-events-none p-12 flex flex-col justify-between">
+        <div className="w-full h-screen bg-black relative overflow-hidden">
+            {/* Minimal HUD - Pushed to the very edges to focus on 3D */}
+            <div className="absolute inset-0 z-10 pointer-events-none p-16 flex flex-col justify-between">
                 <div className="flex justify-between items-start">
-                    <div className="space-y-6">
-                        <Link href="/" className="flex items-center gap-5 pointer-events-auto">
-                            <div className="bg-orange-600 p-3 rounded-full shadow-[0_0_30px_rgba(249,115,22,0.4)]">
-                                <Zap className="h-5 w-5 text-white fill-white" />
-                            </div>
-                            <span className="text-4xl font-black tracking-[-0.1em] uppercase italic text-white leading-none">
-                                FORGE
-                            </span>
-                        </Link>
-                        <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.6em] text-white/30">
-                            <Activity className="h-3 w-3 text-orange-600" /> SYSTEM ARCHIVE // SYNC 100%
+                    <Link href="/" className="flex items-center gap-6 pointer-events-auto group">
+                        <div className="bg-orange-600 p-4 rounded-full shadow-[0_0_50px_rgba(249,115,22,0.6)] group-hover:scale-110 transition-transform">
+                            <Zap className="h-6 w-6 text-white fill-white" />
                         </div>
-                    </div>
+                        <span className="text-5xl font-black tracking-[-0.15em] uppercase italic text-white leading-none">
+                            FORGE
+                        </span>
+                    </Link>
 
                     <div className="pointer-events-auto">
                         <Link href="/login">
-                            <button className="bg-white text-black text-[11px] font-black uppercase tracking-[0.4em] px-14 py-5 rounded-full hover:bg-orange-600 hover:text-white transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                            <button className="bg-white text-black text-[12px] font-black uppercase tracking-[0.5em] px-16 py-6 rounded-full hover:bg-orange-600 hover:text-white transition-all shadow-[0_0_80px_rgba(255,255,255,0.2)]">
                                 INITIALIZE
                             </button>
                         </Link>
@@ -227,66 +235,65 @@ export default function ForgeWorld() {
                 </div>
 
                 <div className="flex justify-between items-end">
-                    <div className="max-w-md space-y-10">
-                        <div className="space-y-4">
-                            <h2 className="text-7xl font-black uppercase italic tracking-[-0.08em] text-white leading-none">FORGE HUB</h2>
-                            <div className="flex items-center gap-4">
-                                <span className="h-px w-12 bg-orange-600" />
-                                <p className="text-[11px] text-gray-600 font-bold uppercase tracking-[0.4em]">ORBIT TO NAVIGATE // SELECT STATION</p>
-                            </div>
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-6 text-[11px] font-black uppercase tracking-[0.8em] text-orange-600/60">
+                            <Activity className="h-4 w-4" /> BIO-SYNC: ESTABLISHED // WORKSHOP_ACTIVE
                         </div>
-
-                        <div className="grid grid-cols-2 gap-12 border-l border-white/5 pl-8">
-                            <div className="space-y-3">
-                                <span className="text-[9px] font-black text-gray-800 uppercase tracking-widest">Protocol Load</span>
-                                <div className="h-1 w-full bg-white/5 overflow-hidden">
-                                    <motion.div
-                                        animate={{ width: ["20%", "80%", "60%"] }}
-                                        transition={{ duration: 4, repeat: Infinity }}
-                                        className="h-full bg-orange-600"
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                <span className="text-[9px] font-black text-gray-800 uppercase tracking-widest">Neural Link</span>
-                                <div className="h-1 w-full bg-white/5 overflow-hidden">
-                                    <div className="h-full w-full bg-orange-600 animate-pulse" />
-                                </div>
-                            </div>
-                        </div>
+                        <h2 className="text-[12vw] font-black uppercase italic tracking-[-0.1em] text-white/5 leading-[0.8] select-none">
+                            HUB
+                        </h2>
                     </div>
 
-                    <div className="text-[9px] font-black text-gray-900 uppercase tracking-[1.5em] vertical-rl rotate-180 mb-2">
-                        STABLE_BUILD_2026_01
+                    <div className="text-[10px] font-black text-gray-800 uppercase tracking-[2em] mb-4">
+                        ALPHA_CORE_V1
                     </div>
                 </div>
             </div>
 
             {/* 3D Scene */}
-            <Canvas shadows gl={{ antialias: true }}>
-                <PerspectiveCamera makeDefault position={[18, 12, 18]} fov={35} />
+            <Canvas
+                shadows
+                gl={{ antialias: false, powerPreference: "high-performance" }}
+                dpr={[1, 2]}
+            >
+                <PerspectiveCamera makeDefault position={[25, 15, 25]} fov={40} />
 
-                <color attach="background" args={['#020202']} />
-                <Stars radius={100} depth={50} count={7000} factor={4} saturation={0} fade speed={1} />
+                <color attach="background" args={['#000']} />
+                <Stars radius={200} depth={100} count={10000} factor={6} saturation={0} fade speed={2} />
 
                 <Suspense fallback={null}>
-                    <Stage environment="city" intensity={0.5}>
-                        <ForgeScene />
-                    </Stage>
+                    <Environment preset="night" />
+
+                    <ambientLight intensity={0.5} />
+                    <spotLight position={[50, 50, 50]} angle={0.2} penumbra={1} intensity={10} color="#f97316" castShadow />
+
+                    <ForgeScene />
+
+                    {/* POST PROCESSING - THE BANGER FACTOR */}
+                    <EffectComposer disableNormalPass>
+                        <Bloom
+                            luminanceThreshold={1}
+                            mipmapBlur
+                            intensity={1.5}
+                            radius={0.4}
+                        />
+                        <ChromaticAberration offset={new THREE.Vector2(0.001, 0.001)} />
+                        <Noise opacity={0.05} />
+                        <Vignette eskil={false} offset={0.1} darkness={1.1} />
+                    </EffectComposer>
                 </Suspense>
 
                 <PresentationControls
                     global
-                    snap
+                    snap={{ mass: 4, tension: 1500 }}
                     speed={1.5}
-                    rotation={[0, 0.5, 0]}
-                    polar={[-Math.PI / 6, Math.PI / 6]}
+                    rotation={[0, 0.4, 0]}
+                    polar={[-Math.PI / 10, Math.PI / 10]}
                     azimuth={[-Math.PI / 2, Math.PI / 2]}
+                    config={{ mass: 1, tension: 170, friction: 26 }}
                 >
-                    {/* The controls wrap the scene but Stage centers it */}
+                    {/* Scene wrapper */}
                 </PresentationControls>
-
-                <ContactShadows position={[0, -4, 0]} opacity={0.6} scale={40} blur={2.5} far={10} color="#000000" />
             </Canvas>
         </div>
     )
