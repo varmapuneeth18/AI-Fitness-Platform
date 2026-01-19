@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Activity, Flame, Scale, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight, Zap, Target, ZapIcon, ShieldCheck } from "lucide-react"
+import { Activity, Flame, Scale, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight, Zap, Target, ZapIcon, ShieldCheck, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
