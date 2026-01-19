@@ -11,7 +11,8 @@ import {
     Html,
     Environment,
     ContactShadows,
-    PresentationControls
+    PresentationControls,
+    Stars
 } from '@react-three/drei'
 import * as THREE from 'three'
 import Link from 'next/link'
@@ -157,14 +158,15 @@ function ForgeWorld() {
 
             {/* 3D Scene */}
             <Canvas shadows className="cursor-grab active:cursor-grabbing">
-                <PerspectiveCamera makeDefault position={[12, 10, 12]} fov={40} />
+                <PerspectiveCamera makeDefault position={[10, 8, 10]} fov={40} />
 
                 <color attach="background" args={['#020202']} />
-                <fog attach="fog" args={['#020202', 15, 25]} />
 
-                <ambientLight intensity={0.2} />
-                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} color="#f97316" castShadow />
+                <ambientLight intensity={1.5} />
+                <spotLight position={[10, 20, 10]} angle={0.25} penumbra={1} intensity={3} color="#f97316" castShadow />
                 <pointLight position={[-10, -10, -10]} intensity={1} color="#333" />
+
+                <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
 
                 <PresentationControls
                     global
@@ -216,10 +218,24 @@ function ForgeWorld() {
                         </Float>
 
                         <ConnectionPaths />
+
+                        {/* Interactive Ground */}
+                        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.1, 0]} receiveShadow>
+                            <planeGeometry args={[100, 100]} />
+                            <MeshDistortMaterial
+                                color="#050505"
+                                speed={0}
+                                distort={0}
+                                roughness={0.1}
+                                metalness={0.8}
+                                transparent
+                                opacity={0.6}
+                            />
+                        </mesh>
                     </group>
                 </PresentationControls>
 
-                <ContactShadows resolution={1024} scale={20} blur={2} opacity={0.5} far={10} color="#000" />
+                <ContactShadows resolution={1024} scale={30} blur={1} opacity={0.8} far={10} color="#000" />
                 <Environment preset="city" />
             </Canvas>
         </div>
