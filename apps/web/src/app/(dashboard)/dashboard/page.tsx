@@ -16,12 +16,17 @@ export default function DashboardPage() {
                     animate={{ opacity: 1, x: 0 }}
                     className="flex flex-col md:flex-row md:items-end justify-between gap-6"
                 >
-                    <div className="space-y-4">
-                        <div className="inline-flex items-center gap-3 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[9px] font-black uppercase tracking-[0.3em]">
-                            <ShieldCheck className="h-3 w-3" /> Core Protocol Alpha
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-orange-600 p-2.5 rounded-full">
+                                <Zap className="h-4 w-4 text-white fill-white" />
+                            </div>
+                            <span className="text-3xl font-black tracking-[-0.08em] uppercase italic text-white leading-none">
+                                FORGE
+                            </span>
                         </div>
-                        <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase italic leading-none">Status</h1>
-                        <p className="text-gray-500 font-bold tracking-[0.2em] uppercase text-[10px]">Optimization trajectory: <span className="text-orange-500">Elite</span></p>
+                        <h1 className="text-7xl md:text-9xl font-black tracking-[-0.05em] uppercase italic leading-none text-white">STATUS</h1>
+                        <p className="text-gray-600 font-bold tracking-[0.4em] uppercase text-[10px]">Optimizing: <span className="text-orange-600">Active Protocol</span></p>
                     </div>
 
                     <div className="flex gap-4">

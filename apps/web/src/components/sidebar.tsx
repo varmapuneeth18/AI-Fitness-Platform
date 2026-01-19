@@ -58,17 +58,17 @@ export function Sidebar({ className }: SidebarProps) {
 
     return (
         <div className={cn("flex flex-col h-full bg-[#050505] border-r border-white/5 pt-10", className)}>
-            <div className="px-8 mb-12">
-                <Link href="/dashboard" className="flex items-center gap-3">
-                    <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-2 rounded-xl">
-                        <Zap className="h-5 w-5 text-white fill-white" />
+            <div className="px-10 mb-16">
+                <Link href="/dashboard" className="flex items-center gap-4 group">
+                    <div className="bg-orange-600 p-2.5 rounded-full">
+                        <Zap className="h-4 w-4 text-white fill-white" />
                     </div>
-                    <span className="text-2xl font-black tracking-tighter uppercase italic text-white leading-none">
-                        Forge
+                    <span className="text-2xl font-black tracking-[-0.08em] uppercase italic text-white leading-none">
+                        FORGE
                     </span>
                 </Link>
-                <div className="mt-4 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] text-gray-700">
-                    <ShieldCheck className="h-2.5 w-2.5" /> Core Alpha
+                <div className="mt-4 flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.5em] text-gray-800">
+                    <div className="w-1 h-1 rounded-full bg-orange-600" /> ALPHA CORE 0.1
                 </div>
             </div>
 
