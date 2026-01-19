@@ -35,16 +35,16 @@ function MachineCore({ hovered, color }: { hovered: boolean, color: string }) {
     })
 
     return (
-        <mesh ref={meshRef} scale={hovered ? 1.5 : 1.2}>
-            <octahedronGeometry args={[2.5, 0]} />
+        <mesh ref={meshRef} scale={hovered ? 1.8 : 1.5}>
+            <octahedronGeometry args={[3.5, 0]} />
             <MeshDistortMaterial
-                color={hovered ? color : "#222"}
+                color={hovered ? color : "#333"}
                 speed={2}
                 distort={0.4}
                 metalness={1}
                 roughness={0.1}
                 emissive={color}
-                emissiveIntensity={hovered ? 10 : 1}
+                emissiveIntensity={hovered ? 15 : 2}
             />
         </mesh>
     )
@@ -62,17 +62,21 @@ function MachineRings({ hovered, color }: { hovered: boolean, color: string }) {
 
     return (
         <group ref={groupRef}>
-            <Torus args={[4, 0.04, 16, 100]} rotation={[Math.PI / 2, 0, 0]}>
+            <Torus args={[5.5, 0.05, 16, 100]} rotation={[Math.PI / 2, 0, 0]}>
                 <meshStandardMaterial
                     color={color}
                     emissive={color}
-                    emissiveIntensity={hovered ? 20 : 2}
+                    emissiveIntensity={hovered ? 30 : 5}
                     transparent
                     opacity={0.8}
                 />
             </Torus>
-            <Torus args={[3.6, 0.02, 16, 100]} rotation={[0, Math.PI / 2, 0]}>
-                <meshStandardMaterial color="#fff" transparent opacity={0.2} />
+            <Torus args={[5, 0.02, 16, 100]} rotation={[0, Math.PI / 2, 0]}>
+                <meshStandardMaterial color="#fff" transparent opacity={0.3} />
+            </Torus>
+            {/* Added tertiary scanning ring */}
+            <Torus args={[6, 0.01, 16, 100]} rotation={[Math.PI / 4, 0, 0]}>
+                <meshStandardMaterial color={color} transparent opacity={0.1} />
             </Torus>
         </group>
     )
@@ -144,15 +148,50 @@ function ForgeStation({ position, color, icon: Icon, title, description, tags, i
     )
 }
 
+function ForgeParticles() {
+    const points = useMemo(() => {
+        const p = new Float32Array(500 * 3)
+        for (let i = 0; i < 500; i++) {
+            p[i * 3] = (Math.random() - 0.5) * 100
+            p[i * 3 + 1] = (Math.random() - 0.5) * 50
+            p[i * 3 + 2] = (Math.random() - 0.5) * 100
+        }
+        return p
+    }, [])
+
+    const ref = useRef<THREE.Points>(null!)
+    useFrame((state) => {
+        if (ref.current) {
+            ref.current.rotation.y += 0.001
+            ref.current.rotation.x += 0.0005
+        }
+    })
+
+    return (
+        <points ref={ref}>
+            <bufferGeometry>
+                <bufferAttribute
+                    attach="attributes-position"
+                    count={points.length / 3}
+                    array={points}
+                    itemSize={3}
+                    args={[points, 3]}
+                />
+            </bufferGeometry>
+            <pointsMaterial size={0.15} color="#f97316" transparent opacity={0.4} sizeAttenuation />
+        </points>
+    )
+}
+
 function InfiniteGround() {
     return (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -15, 0]} receiveShadow>
-            <planeGeometry args={[1000, 1000]} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -10, 0]} receiveShadow>
+            <planeGeometry args={[2000, 2000]} />
             <meshStandardMaterial
-                color="#020202"
-                roughness={0.05}
+                color="#000"
+                roughness={0}
                 metalness={1}
-                envMapIntensity={0.5}
+                envMapIntensity={0.2}
             />
         </mesh>
     )
@@ -163,48 +202,49 @@ function ForgeScene() {
         <group>
             <ForgeStation
                 index="ALPHA"
-                position={[-15, 0, 5]}
+                position={[-10, 0, 2]}
                 color="#f97316"
                 icon={Dumbbell}
                 title="PROTOCOLS"
-                description="High-fidelity workout logging. Track force vectors, volume trajectories, and progression indices in real-time."
+                description="High-fidelity workout logging. Track force vectors and volume trajectories."
                 tags={["Lifting", "Telemetry", "Volume"]}
             />
             <ForgeStation
                 index="BETA"
-                position={[15, 0, 5]}
+                position={[10, 0, 2]}
                 color="#f97316"
                 icon={Utensils}
                 title="METABOLIC"
-                description="AI-driven nutrition architecture. Align your bio-fueling protocol with your metabolic performance load."
+                description="AI-driven nutrition architecture. Align your fueling to your performance load."
                 tags={["Macros", "Fueling", "Sync"]}
             />
             <ForgeStation
                 index="GAMMA"
-                position={[0, 0, -15]}
+                position={[0, 0, -10]}
                 color="#ffffff"
                 icon={Cpu}
                 title="INTELLIGENCE"
-                description="Neural-linked performance coach. Consult the Forge AI for tactical routine adjustments and biology optimization."
+                description="Neural-linked coach. Consult the Forge AI for biology optimization."
                 tags={["AI Chat", "Neural", "Strategy"]}
             />
 
-            {/* Central Power Core */}
-            <Float speed={10} rotationIntensity={5} floatIntensity={2}>
+            {/* Central Power Core - MASSIVE */}
+            <Float speed={5} rotationIntensity={2} floatIntensity={1}>
                 <mesh position={[0, 0, 0]}>
-                    <sphereGeometry args={[2, 64, 64]} />
+                    <sphereGeometry args={[4, 64, 64]} />
                     <MeshDistortMaterial
                         color="#f97316"
-                        distort={0.6}
-                        speed={5}
+                        distort={0.4}
+                        speed={3}
                         metalness={1}
                         roughness={0}
                         emissive="#f97316"
-                        emissiveIntensity={5}
+                        emissiveIntensity={8}
                     />
                 </mesh>
             </Float>
 
+            <ForgeParticles />
             <InfiniteGround />
         </group>
     )
@@ -239,13 +279,13 @@ export default function ForgeWorld() {
                         <div className="flex items-center gap-6 text-[11px] font-black uppercase tracking-[0.8em] text-orange-600/60">
                             <Activity className="h-4 w-4" /> BIO-SYNC: ESTABLISHED // WORKSHOP_ACTIVE
                         </div>
-                        <h2 className="text-[12vw] font-black uppercase italic tracking-[-0.1em] text-white/5 leading-[0.8] select-none">
-                            HUB
+                        <h2 className="text-[10vw] font-black uppercase italic tracking-[-0.1em] text-white/5 leading-[0.8] select-none">
+                            FORGE
                         </h2>
                     </div>
 
                     <div className="text-[10px] font-black text-gray-800 uppercase tracking-[2em] mb-4">
-                        ALPHA_CORE_V1
+                        CORE_01
                     </div>
                 </div>
             </div>
@@ -256,7 +296,7 @@ export default function ForgeWorld() {
                 gl={{ antialias: false, powerPreference: "high-performance" }}
                 dpr={[1, 2]}
             >
-                <PerspectiveCamera makeDefault position={[25, 15, 25]} fov={40} />
+                <PerspectiveCamera makeDefault position={[18, 10, 18]} fov={35} />
 
                 <color attach="background" args={['#000']} />
                 <Stars radius={200} depth={100} count={10000} factor={6} saturation={0} fade speed={2} />
@@ -264,17 +304,26 @@ export default function ForgeWorld() {
                 <Suspense fallback={null}>
                     <Environment preset="night" />
 
-                    <ambientLight intensity={0.5} />
-                    <spotLight position={[50, 50, 50]} angle={0.2} penumbra={1} intensity={10} color="#f97316" castShadow />
+                    <ambientLight intensity={1} />
+                    <spotLight position={[30, 30, 30]} angle={0.2} penumbra={1} intensity={15} color="#f97316" castShadow />
 
-                    <ForgeScene />
+                    <PresentationControls
+                        global
+                        snap
+                        speed={1.5}
+                        rotation={[0, 0.4, 0]}
+                        polar={[-Math.PI / 10, Math.PI / 10]}
+                        azimuth={[-Math.PI / 2, Math.PI / 2]}
+                    >
+                        <ForgeScene />
+                    </PresentationControls>
 
                     {/* POST PROCESSING - THE BANGER FACTOR */}
                     <EffectComposer>
                         <Bloom
-                            luminanceThreshold={1}
+                            luminanceThreshold={0.5}
                             mipmapBlur
-                            intensity={1.5}
+                            intensity={2}
                             radius={0.4}
                         />
                         <ChromaticAberration offset={new THREE.Vector2(0.001, 0.001)} />
@@ -283,16 +332,7 @@ export default function ForgeWorld() {
                     </EffectComposer>
                 </Suspense>
 
-                <PresentationControls
-                    global
-                    snap
-                    speed={1.5}
-                    rotation={[0, 0.4, 0]}
-                    polar={[-Math.PI / 10, Math.PI / 10]}
-                    azimuth={[-Math.PI / 2, Math.PI / 2]}
-                >
-                    {/* Scene wrapper */}
-                </PresentationControls>
+                {/* Scene wrapper moved inside Suspense for control over objects */}
             </Canvas>
         </div>
     )
