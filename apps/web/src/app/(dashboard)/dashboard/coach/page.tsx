@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Send, Bot, User } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export default function CoachPage() {
     const { data: session } = useSession()
@@ -132,4 +133,4 @@ export default function CoachPage() {
     )
 }
 
-import { cn } from "@/lib/utils"
+

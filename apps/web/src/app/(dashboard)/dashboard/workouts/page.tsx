@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Dumbbell, Play } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export default function WorkoutsPage() {
     const { data: session } = useSession()
@@ -300,4 +301,4 @@ export default function WorkoutsPage() {
     )
 }
 
-import { cn } from "@/lib/utils"
+
