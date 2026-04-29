@@ -1,26 +1,32 @@
-# Fitness Platform
+# AI Fitness Platform
+
+AI-powered fitness coach with intelligent agent-based workout routing and immersive 3D visualizations.
+
+## Features
+
+- **Agent-Based Routing:** LangGraph orchestrates intelligent workout recommendations
+- **3D Interactive UI:** Three.js-powered immersive workout visualizations  
+- **Real-Time Tracking:** Live workout and nutrition monitoring
+- **Automated Insights:** AI-generated progress analysis and recommendations
+
+## Tech Stack
+
+- **Frontend:** Next.js, React, Three.js
+- **Backend:** FastAPI, PostgreSQL
+- **AI:** LangChain, LangGraph, OpenAI API
 
 ## Setup
 
-### Prerequisites
-- Node.js 18+
-- Python 3.10+
-- (Optional) Docker for PostgreSQL. Defaults to SQLite if not available.
+```bash
+# Install dependencies
+npm install
+pip install -r requirements.txt
 
-### Backend (FastAPI)
-1. Navigate to `apps/api`.
-2. Create and activate venv: `python3 -m venv venv && source venv/bin/activate`.
-3. Install deps: `pip install -r requirements.txt` (Run `pip freeze > requirements.txt` first if needed, or install manually).
-   *(Currently installed: fastapi, uvicorn[standard], sqlalchemy, psycopg2-binary, alembic)*.
-4. Run server: `python3 -m uvicorn apps.api.main:app --reload --port 8001`.
-   *(Note: Port 8001 is used to avoid conflicts)*.
-
-### Frontend (Next.js)
-1. Navigate to `apps/web`.
-2. Install deps: `npm install`.
-3. Run dev server: `npm run dev`.
+# Run development server
+npm run dev
+python -m uvicorn main:app --reload
+```
 
 ## Architecture
-- **Web**: Next.js App Router.
-- **API**: FastAPI + SQLAlchemy.
-- **Database**: SQLite (local dev), Postgres (production/docker).
+
+[Add diagram or explain agent routing logic]
